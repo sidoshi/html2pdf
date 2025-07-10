@@ -2,7 +2,7 @@ use anyhow::Result;
 use chromiumoxide::{
     Page,
     browser::{Browser, BrowserConfig},
-    cdp::browser_protocol::page::PrintToPdfParamsBuilder,
+    cdp::browser_protocol::page::{PrintToPdfParams, PrintToPdfParamsBuilder},
 };
 use futures::StreamExt;
 use tokio::sync::{Mutex, Semaphore};
@@ -48,7 +48,11 @@ impl BrowserPool {
         })
     }
 
-    pub async fn print_to_pdf(&self, html: &str) -> Result<Vec<u8>> {
+    pub async fn print_to_pdf(
+        &self,
+        html: &str,
+        custom_params: Option<PrintToPdfParams>,
+    ) -> Result<Vec<u8>> {
         // Acquire semaphore permit to limit concurrent usage
         //
         let _permit = self.semaphore.acquire().await?;
@@ -59,8 +63,11 @@ impl BrowserPool {
         // Set the HTML content
         page.set_content(html).await?;
 
-        // Prepare PDF parameters
-        let params = PrintToPdfParamsBuilder::default().build();
+        // Prepare PDF parameters - use custom params if provided, otherwise use default
+        let params = match custom_params {
+            Some(params) => params,
+            None => PrintToPdfParamsBuilder::default().build(),
+        };
 
         // Generate PDF
         let pdf_result = page.pdf(params).await?;
