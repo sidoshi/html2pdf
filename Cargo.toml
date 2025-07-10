@@ -11,5 +11,6 @@ chromiumoxide = "0.7.0"
 futures = "0.3.31"
 serde = { version = "1.0.219", features = ["derive"] }
 tokio = { version = "1.46.1", features = ["full"] }
+tower-http = { version = "0.6.6", features = ["cors"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
