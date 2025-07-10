@@ -1,10 +1,11 @@
+mod html2pdf;
+
 use axum::{
-    Json, Router,
-    http::StatusCode,
+    Router,
     routing::{get, post},
 };
 
-use serde::{Deserialize, Serialize};
+use html2pdf::html2pdf;
 
 #[tokio::main]
 async fn main() {
@@ -22,23 +23,4 @@ async fn main() {
 
 async fn healthz() -> &'static str {
     "Pong"
-}
-
-async fn html2pdf(Json(payload): Json<Html2PdfRequest>) -> (StatusCode, Json<Html2PdfResponse>) {
-    (
-        StatusCode::OK,
-        Json(Html2PdfResponse {
-            pdf_base64: format!("PDF_BASE64_CONTENT_FOR_{}", payload.blob),
-        }),
-    )
-}
-
-#[derive(Deserialize)]
-struct Html2PdfRequest {
-    blob: String,
-}
-
-#[derive(Serialize)]
-struct Html2PdfResponse {
-    pdf_base64: String,
 }
