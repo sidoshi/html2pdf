@@ -5,13 +5,12 @@ use chromiumoxide::{
     cdp::browser_protocol::page::PrintToPdfParamsBuilder,
 };
 use futures::StreamExt;
-use std::sync::Arc;
 use tokio::sync::{Mutex, Semaphore};
 
 pub struct BrowserPool {
     browser: Browser,
-    page_pool: Arc<Mutex<Vec<Page>>>,
-    semaphore: Arc<Semaphore>,
+    page_pool: Mutex<Vec<Page>>,
+    semaphore: Semaphore,
     max_pool_size: usize,
 }
 
@@ -43,14 +42,15 @@ impl BrowserPool {
 
         Ok(BrowserPool {
             browser,
-            page_pool: Arc::new(Mutex::new(Vec::new())),
-            semaphore: Arc::new(Semaphore::new(max_concurrent_tabs)),
+            page_pool: Mutex::new(Vec::new()),
+            semaphore: Semaphore::new(max_concurrent_tabs),
             max_pool_size: max_concurrent_tabs,
         })
     }
 
     pub async fn print_to_pdf(&self, html: &str) -> Result<Vec<u8>> {
         // Acquire semaphore permit to limit concurrent usage
+        //
         let _permit = self.semaphore.acquire().await?;
 
         // Try to get a page from the pool, or create a new one
