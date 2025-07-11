@@ -21,13 +21,10 @@ impl BrowserPool {
 
     pub async fn new_with_pool_size(max_concurrent_tabs: usize) -> Result<Self> {
         // Initialize the browser
-        let config = BrowserConfig::builder()
-            .viewport(None)
-            .build()
-            .map_err(|e| {
-                eprintln!("Failed to create browser config: {}", e);
-                anyhow::anyhow!("Browser config error")
-            })?;
+        let config = BrowserConfig::builder().build().map_err(|e| {
+            eprintln!("Failed to create browser config: {}", e);
+            anyhow::anyhow!("Browser config error")
+        })?;
 
         let (browser, mut handler) = Browser::launch(config).await?;
 
@@ -63,11 +60,15 @@ impl BrowserPool {
         // Set the HTML content
         page.set_content(html).await?;
 
-        // Prepare PDF parameters - use custom params if provided, otherwise use default
-        let params = match custom_params {
-            Some(params) => params,
-            None => PrintToPdfParamsBuilder::default().build(),
-        };
+        // Create default params with spread-like syntax
+        let default_params = PrintToPdfParamsBuilder::default()
+            .print_background(true)
+            .build();
+
+        let params = custom_params.map_or(default_params, |custom| PrintToPdfParams {
+            print_background: custom.print_background.or(Some(true)),
+            ..custom
+        });
 
         // Generate PDF
         let pdf_result = page.pdf(params).await?;
