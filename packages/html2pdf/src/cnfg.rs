@@ -39,10 +39,11 @@ fn load_config() -> AppConfig {
         .parse()
         .expect("Invalid PORT value");
 
-    config.ship_key = std::env::var("SHIP_KEY").expect("SHIP_KEY environment variable is not set");
+    config.ship_key =
+        std::env::var("AUTH_SHIP_TOKEN").expect("AUTH_SHIP_TOKEN environment variable is not set");
 
-    let auth0_jwks_uri =
-        std::env::var("AUTH_JWKS_URI").expect("AUTH_JWKS_URI environment variable is not set");
+    let auth0_jwks_uri = std::env::var("AUTH_AUTH0_JWKS_URI")
+        .expect("AUTH_AUTH0_JWKS_URI environment variable is not set");
     let auth_eu_keycloak_jwks_uri = std::env::var("AUTH_EU_KEYCLOAK_JWKS_URI")
         .expect("AUTH_EU_KEYCLOAK_JWKS_URI environment variable is not set");
 
