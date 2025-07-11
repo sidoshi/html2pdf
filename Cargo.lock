@@ -928,6 +928,7 @@ name = "html2pdf"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "auth-sdk",
  "axum",
  "base64",
  "chromiumoxide",

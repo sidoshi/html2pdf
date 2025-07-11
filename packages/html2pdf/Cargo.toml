@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.98"
+auth-sdk = { version = "0.1.0", path = "../auth-sdk" }
 axum = "0.8.4"
 base64 = "0.22.1"
 chromiumoxide = "0.7.0"
