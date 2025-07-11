@@ -22,6 +22,8 @@ pub async fn html2pdf(
     State(app_state): State<AppState>,
     Json(payload): Json<Html2PdfRequest>,
 ) -> Result<Json<Html2PdfResponse>, HttpError> {
+    tracing::debug!("Received HTML2PDF request");
+
     if payload.blob.is_empty() {
         return Err(HttpError::BadRequest(anyhow::anyhow!("Empty HTML content")));
     }
