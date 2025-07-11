@@ -25,7 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "https://keycloak-sandbox.forto.com".to_string(),
             "https://keycloak-sandbox.forto.com/auth/realms/tms/protocol/openid-connect/certs".to_string()
         )
-        .with_ship_key("your-base64-ship-key".to_string())
+        .with_ship_key("your-ship-key".to_string())
         .allow_test_tokens();
 
     let validator = TokenValidator::new(config);

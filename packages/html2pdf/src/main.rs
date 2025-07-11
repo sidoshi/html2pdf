@@ -1,4 +1,5 @@
 mod browser_pool;
+mod cnfg;
 mod error;
 mod html2pdf;
 
@@ -17,6 +18,7 @@ use html2pdf::html2pdf;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let config = cnfg::get();
     tracing_subscriber::fmt::init();
 
     let browser_pool = Arc::new(BrowserPool::new().await?);
@@ -33,7 +35,7 @@ async fn main() -> Result<()> {
         .with_state(browser_pool)
         .layer(cors);
 
-    let port = std::env::var("PORT").unwrap_or_else(|_| "3000".to_string());
+    let port = config.port;
     let addr = format!("0.0.0.0:{}", port);
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     tracing::debug!("listening on {}", listener.local_addr().unwrap());
